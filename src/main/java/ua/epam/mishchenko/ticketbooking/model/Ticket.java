@@ -1,52 +1,37 @@
 package ua.epam.mishchenko.ticketbooking.model;
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
  * The type Ticket.
  */
-@Entity
-@Table(name = "tickets")
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Document("tickets")
 public class Ticket {
 
     /**
      * The Id.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     /**
      * The User entity.
      */
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
-    /**
-     * The Event entity.
-     */
-    @ManyToOne
-    @JoinColumn(name = "event_id")
     private Event event;
 
     /**
      * The Place.
      */
-    @Column(name = "place", nullable = false)
     private Integer place;
 
     /**
      * The Category.
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false)
     private Category category;
 
     /**
@@ -64,7 +49,7 @@ public class Ticket {
      * @param place    the place
      * @param category the category
      */
-    public Ticket(Long id, User user, Event event, int place, Category category) {
+    public Ticket(String id, User user, Event event, int place, Category category) {
         this.id = id;
         this.user = user;
         this.event = event;
@@ -92,7 +77,7 @@ public class Ticket {
      *
      * @return the id
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -101,7 +86,7 @@ public class Ticket {
      *
      * @param id the id
      */
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

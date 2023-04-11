@@ -9,10 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
-import ua.epam.mishchenko.ticketbooking.model.*;
+import ua.epam.mishchenko.ticketbooking.model.Category;
+import ua.epam.mishchenko.ticketbooking.model.Event;
+import ua.epam.mishchenko.ticketbooking.model.Ticket;
+import ua.epam.mishchenko.ticketbooking.model.User;
 import ua.epam.mishchenko.ticketbooking.repository.EventRepository;
 import ua.epam.mishchenko.ticketbooking.repository.TicketRepository;
-import ua.epam.mishchenko.ticketbooking.repository.UserAccountRepository;
 import ua.epam.mishchenko.ticketbooking.repository.UserRepository;
 
 import java.math.BigDecimal;
@@ -44,95 +46,87 @@ public class TicketServiceImplTest {
     @MockBean
     private EventRepository eventRepository;
 
-    @MockBean
-    private UserAccountRepository userAccountRepository;
-
     @Test
     public void bookTicketIfUserNotExistShouldReturnNull() {
-        when(userRepository.existsById(anyLong())).thenReturn(false);
+        when(userRepository.existsById(anyString())).thenReturn(false);
 
-        Ticket ticket = ticketService.bookTicket(1L, 1L, 1, Category.BAR);
+        Ticket ticket = ticketService.bookTicket("1L", "1L", 1, Category.BAR);
 
         assertNull(ticket);
     }
 
     @Test
     public void bookTicketIfEventNotExistShouldReturnNull() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(eventRepository.existsById(anyLong())).thenReturn(false);
+        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(eventRepository.existsById(anyString())).thenReturn(false);
 
-        Ticket ticket = ticketService.bookTicket(1L, 1L, 1, Category.BAR);
+        Ticket ticket = ticketService.bookTicket("1L", "1L", 1, Category.BAR);
 
         assertNull(ticket);
     }
 
     @Test
     public void bookTicketIfTicketAlreadyBookedShouldReturnNull() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(eventRepository.existsById(anyLong())).thenReturn(true);
-        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyLong(), anyInt(), any(Category.class)))
+        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(eventRepository.existsById(anyString())).thenReturn(true);
+        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyString(), anyInt(), any(Category.class)))
                 .thenReturn(true);
 
-        Ticket ticket = ticketService.bookTicket(1L, 1L, 1, Category.BAR);
+        Ticket ticket = ticketService.bookTicket("1L", "1L", 1, Category.BAR);
 
         assertNull(ticket);
     }
 
     @Test
     public void bookTicketIfUserNotHaveAccountShouldReturnNull() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(eventRepository.existsById(anyLong())).thenReturn(true);
-        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyLong(), anyInt(), any(Category.class)))
+        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(eventRepository.existsById(anyString())).thenReturn(true);
+        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyString(), anyInt(), any(Category.class)))
                 .thenReturn(false);
-        when(userAccountRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Ticket ticket = ticketService.bookTicket(1L, 1L, 1, Category.BAR);
+        Ticket ticket = ticketService.bookTicket("1L", "1L", 1, Category.BAR);
 
         assertNull(ticket);
     }
 
     @Test
     public void bookTicketIfUserNotHaveMoneyShouldReturnNull() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(eventRepository.existsById(anyLong())).thenReturn(true);
-        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyLong(), anyInt(), any(Category.class)))
+        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(eventRepository.existsById(anyString())).thenReturn(true);
+        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyString(), anyInt(), any(Category.class)))
                 .thenReturn(false);
-        when(userAccountRepository.findById(anyLong()))
-                .thenReturn(Optional.of(new UserAccount(new User(), BigDecimal.ONE)));
-        when(eventRepository.findById(anyLong()))
+        when(eventRepository.findById(anyString()))
                 .thenReturn(Optional.of(new Event("Title", new Date(System.currentTimeMillis()), BigDecimal.TEN)));
 
-        Ticket ticket = ticketService.bookTicket(1L, 1L, 1, Category.BAR);
+        Ticket ticket = ticketService.bookTicket("1L", "1L", 1, Category.BAR);
 
         assertNull(ticket);
     }
 
     @Test
     public void bookTicketIfEverythingFineShouldReturnBookedTicket() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(eventRepository.existsById(anyLong())).thenReturn(true);
-        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyLong(), anyInt(), any(Category.class)))
+        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(eventRepository.existsById(anyString())).thenReturn(true);
+        when(ticketRepository.existsByEventIdAndPlaceAndCategory(anyString(), anyInt(), any(Category.class)))
                 .thenReturn(false);
-        when(userAccountRepository.findById(anyLong()))
-                .thenReturn(Optional.of(new UserAccount(new User(), BigDecimal.TEN)));
-        when(eventRepository.findById(anyLong()))
+        when(eventRepository.findById(anyString()))
                 .thenReturn(Optional.of(new Event("Title", new Date(System.currentTimeMillis()), BigDecimal.ONE)));
 
-        Ticket ticket = ticketService.bookTicket(1L, 1L, 1, Category.BAR);
+        Ticket ticket = ticketService.bookTicket("1L", "1L", 1, Category.BAR);
 
         assertNull(ticket);
     }
 
     @Test
     public void getBookedTicketsWithNotNullUserAndProperPageSizeAndPageNumShouldBeOk() {
-        User user = new User(1L, "Alan", "alan@gmail.com");
+        User user = new User("1L", "Alan", "alan@gmail.com");
         List<Ticket> content = Arrays.asList(
-                new Ticket(1L, new User(), new Event(), 10, Category.BAR),
-                new Ticket(4L, new User(), new Event(), 20, Category.BAR)
+                new Ticket("1L", new User(), new Event(), 10, Category.BAR),
+                new Ticket("4L", new User(), new Event(), 20, Category.BAR)
         );
         Page<Ticket> page = new PageImpl<>(content);
 
-        when(ticketRepository.getAllByUserId(any(Pageable.class), anyLong())).thenReturn(page);
+        when(ticketRepository.getAllByUserId(any(Pageable.class), anyString())).thenReturn(page);
 
         List<Ticket> actualListOfTicketsByUser = ticketService.getBookedTickets(user, 2, 1);
 
@@ -141,7 +135,7 @@ public class TicketServiceImplTest {
 
     @Test
     public void getBookedTicketsByUserWithExceptionShouldReturnEmptyList() {
-        when(ticketRepository.getAllByUserId(any(Pageable.class), anyLong())).thenThrow(RuntimeException.class);
+        when(ticketRepository.getAllByUserId(any(Pageable.class), anyString())).thenThrow(RuntimeException.class);
 
         List<Ticket> actualListOfTicketsByUser = ticketService.getBookedTickets(new User(), 2, 1);
 
@@ -157,14 +151,14 @@ public class TicketServiceImplTest {
 
     @Test
     public void getBookedTicketsWithNotNullEventAndProperPageSizeAndPageNumShouldBeOk() throws ParseException {
-        Event event = new Event(4L, "Fourth event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE);
+        Event event = new Event("4L", "Fourth event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE);
         List<Ticket> content = Arrays.asList(
-                new Ticket(4L, new User(), new Event(), 20, Category.BAR),
-                new Ticket(2L, new User(), new Event(), 10, Category.PREMIUM)
+                new Ticket("4L", new User(), new Event(), 20, Category.BAR),
+                new Ticket("2L", new User(), new Event(), 10, Category.PREMIUM)
         );
         Page<Ticket> page = new PageImpl<>(content);
 
-        when(ticketRepository.getAllByEventId(any(Pageable.class), anyLong())).thenReturn(page);
+        when(ticketRepository.getAllByEventId(any(Pageable.class), anyString())).thenReturn(page);
 
         List<Ticket> actualListOfTicketsByEvent = ticketService.getBookedTickets(event, 2, 1);
 
@@ -173,7 +167,7 @@ public class TicketServiceImplTest {
 
     @Test
     public void getBookedTicketsByEventWithExceptionShouldReturnEmptyList() {
-        when(ticketRepository.getAllByEventId(any(Pageable.class), anyLong())).thenThrow(RuntimeException.class);
+        when(ticketRepository.getAllByEventId(any(Pageable.class), anyString())).thenThrow(RuntimeException.class);
 
         List<Ticket> actualListOfTicketsByEvent = ticketService.getBookedTickets(new Event(), 2, 1);
 
@@ -189,16 +183,16 @@ public class TicketServiceImplTest {
 
     @Test
     public void cancelTicketExistsTicketShouldReturnTrue() {
-        boolean actualIsDeleted = ticketService.cancelTicket(6L);
+        boolean actualIsDeleted = ticketService.cancelTicket("6L");
 
         assertTrue(actualIsDeleted);
     }
 
     @Test
     public void cancelTicketWithExceptionShouldReturnFalse() {
-        doThrow(new RuntimeException()).when(ticketRepository).deleteById(anyLong());
+        doThrow(new RuntimeException()).when(ticketRepository).deleteById(anyString());
 
-        boolean isRemoved = ticketService.cancelTicket(10L);
+        boolean isRemoved = ticketService.cancelTicket("10L");
 
         assertFalse(isRemoved);
     }

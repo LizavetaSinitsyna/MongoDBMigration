@@ -5,11 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.epam.mishchenko.ticketbooking.facade.impl.BookingFacadeImpl;
 import ua.epam.mishchenko.ticketbooking.model.Ticket;
 import ua.epam.mishchenko.ticketbooking.model.User;
@@ -63,7 +59,7 @@ public class BookedTicketsPDFController {
      * @return the booked tickets by user pdf
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getBookedTicketsByUserPDF(@PathVariable long userId,
+    public ResponseEntity<Object> getBookedTicketsByUserPDF(@PathVariable String userId,
                                                             @RequestParam int pageSize,
                                                             @RequestParam int pageNum) {
         log.info("Showing the tickets by user with id: {}", userId);
@@ -82,7 +78,7 @@ public class BookedTicketsPDFController {
      * @param userId the user id
      * @return the user by id
      */
-    private User getUserById(long userId) {
+    private User getUserById(String userId) {
         User userById = bookingFacade.getUserById(userId);
         if (isNull(userById)) {
             log.info("Can not to find a user by id: {}", userId);
@@ -100,7 +96,7 @@ public class BookedTicketsPDFController {
      * @param userById the user by id
      * @return the booked tickets
      */
-    private List<Ticket> getBookedTickets(long userId, int pageSize, int pageNum, User userById) {
+    private List<Ticket> getBookedTickets(String userId, int pageSize, int pageNum, User userById) {
         List<Ticket> bookedTickets = bookingFacade.getBookedTickets(userById, pageSize, pageNum);
         if (bookedTickets.isEmpty()) {
             log.info("Can not to find the tickets by user with id: {}", userId);

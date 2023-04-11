@@ -19,14 +19,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static ua.epam.mishchenko.ticketbooking.utils.Constants.DATE_FORMATTER;
@@ -43,7 +37,7 @@ public class EventServiceImplTest {
 
     @Test
     public void getEventByIdWithExistsIdShouldBeOk() throws ParseException {
-        long eventId = 3L;
+        String eventId = "3L";
         Event expectedEvent = new Event(eventId, "Third event", DATE_FORMATTER.parse("16-05-2022 12:00"), BigDecimal.ONE);
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(expectedEvent));
@@ -55,9 +49,9 @@ public class EventServiceImplTest {
 
     @Test
     public void getEventByIdWithExceptionShouldReturnNull() {
-        when(eventRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(eventRepository.findById(anyString())).thenReturn(Optional.empty());
 
-        Event actualEvent = eventService.getEventById(10L);
+        Event actualEvent = eventService.getEventById("10L");
 
         assertNull(actualEvent);
     }
@@ -66,8 +60,8 @@ public class EventServiceImplTest {
     public void getEventsByTitleWithExistsTitleShouldBeOk() throws ParseException {
         String title = "Third event";
         List<Event> content = Arrays.asList(
-                new Event(3L, title, DATE_FORMATTER.parse("16-05-2022 12:00"), BigDecimal.ONE),
-                new Event(5L, title, DATE_FORMATTER.parse("25-05-2022 9:10"), BigDecimal.ONE)
+                new Event("3L", title, DATE_FORMATTER.parse("16-05-2022 12:00"), BigDecimal.ONE),
+                new Event("5L", title, DATE_FORMATTER.parse("25-05-2022 9:10"), BigDecimal.ONE)
         );
         Page<Event> page = new PageImpl<>(content);
 
@@ -98,8 +92,8 @@ public class EventServiceImplTest {
     public void getEventsForDayWithExistsDayShouldBeOk() throws ParseException {
         Date day = DATE_FORMATTER.parse("15-05-2022 21:00");
         List<Event> content = Arrays.asList(
-                new Event(2L, "Second event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE),
-                new Event(4L, "Fourth event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE)
+                new Event("2L", "Second event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE),
+                new Event("4L", "Fourth event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE)
         );
         Page<Event> page = new PageImpl<>(content);
 
@@ -139,7 +133,7 @@ public class EventServiceImplTest {
 
     @Test
     public void createEventWithExistsTitleAndEmailShouldReturnNull() throws ParseException {
-        Event expectedEvent = new Event(1L, "Second event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE);
+        Event expectedEvent = new Event("1L", "Second event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE);
 
         when(eventRepository.save(expectedEvent)).thenReturn(expectedEvent);
 
@@ -157,9 +151,9 @@ public class EventServiceImplTest {
 
     @Test
     public void updateEventWithExistsEventShouldBeOk() throws ParseException {
-        Event expectedEvent = new Event(1L, "Second event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE);
+        Event expectedEvent = new Event("1L", "Second event", DATE_FORMATTER.parse("15-05-2022 21:00"), BigDecimal.ONE);
 
-        when(eventRepository.existsById(anyLong())).thenReturn(true);
+        when(eventRepository.existsById(anyString())).thenReturn(true);
         when(eventRepository.save(any(Event.class))).thenReturn(expectedEvent);
 
         Event actualEvent = eventService.updateEvent(expectedEvent);
@@ -185,16 +179,16 @@ public class EventServiceImplTest {
 
     @Test
     public void deleteEventExistsEventShouldReturnTrue() {
-        boolean actualIsDeleted = eventService.deleteEvent(6L);
+        boolean actualIsDeleted = eventService.deleteEvent("6L");
 
         assertTrue(actualIsDeleted);
     }
 
     @Test
     public void deleteEventWithExceptionShouldReturnFalse() {
-        doThrow(new RuntimeException()).when(eventRepository).deleteById(anyLong());
+        doThrow(new RuntimeException()).when(eventRepository).deleteById(anyString());
 
-        boolean actualIsDeleted = eventService.deleteEvent(10L);
+        boolean actualIsDeleted = eventService.deleteEvent("10L");
 
         assertFalse(actualIsDeleted);
     }

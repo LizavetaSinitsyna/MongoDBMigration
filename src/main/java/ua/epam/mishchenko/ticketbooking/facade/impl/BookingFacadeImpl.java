@@ -6,7 +6,6 @@ import ua.epam.mishchenko.ticketbooking.model.Category;
 import ua.epam.mishchenko.ticketbooking.model.Event;
 import ua.epam.mishchenko.ticketbooking.model.Ticket;
 import ua.epam.mishchenko.ticketbooking.model.User;
-import ua.epam.mishchenko.ticketbooking.model.UserAccount;
 import ua.epam.mishchenko.ticketbooking.service.EventService;
 import ua.epam.mishchenko.ticketbooking.service.TicketService;
 import ua.epam.mishchenko.ticketbooking.service.UserAccountService;
@@ -65,7 +64,7 @@ public class BookingFacadeImpl implements BookingFacade {
      * @return the event by id
      */
     @Override
-    public Event getEventById(long eventId) {
+    public Event getEventById(String eventId) {
         return eventService.getEventById(eventId);
     }
 
@@ -124,7 +123,7 @@ public class BookingFacadeImpl implements BookingFacade {
      * @return the boolean
      */
     @Override
-    public boolean deleteEvent(long eventId) {
+    public boolean deleteEvent(String eventId) {
         return eventService.deleteEvent(eventId);
     }
 
@@ -135,7 +134,7 @@ public class BookingFacadeImpl implements BookingFacade {
      * @return the user by id
      */
     @Override
-    public User getUserById(long userId) {
+    public User getUserById(String userId) {
         return userService.getUserById(userId);
     }
 
@@ -192,7 +191,7 @@ public class BookingFacadeImpl implements BookingFacade {
      * @return the boolean
      */
     @Override
-    public boolean deleteUser(long userId) {
+    public boolean deleteUser(String userId) {
         return userService.deleteUser(userId);
     }
 
@@ -206,7 +205,7 @@ public class BookingFacadeImpl implements BookingFacade {
      * @return the ticket
      */
     @Override
-    public Ticket bookTicket(long userId, long eventId, int place, Category category) {
+    public Ticket bookTicket(String userId, String eventId, int place, Category category) {
         return ticketService.bookTicket(userId, eventId, place, category);
     }
 
@@ -243,11 +242,11 @@ public class BookingFacadeImpl implements BookingFacade {
      * @return the boolean
      */
     @Override
-    public boolean cancelTicket(long ticketId) {
+    public boolean cancelTicket(String ticketId) {
         return ticketService.cancelTicket(ticketId);
     }
 
-    public UserAccount refillUserAccount(long userId, BigDecimal money) {
+    public User refillUserAccount(String userId, BigDecimal money) {
         return userAccountService.refillAccount(userId, money);
     }
 }

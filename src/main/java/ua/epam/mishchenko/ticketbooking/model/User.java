@@ -1,48 +1,39 @@
 package ua.epam.mishchenko.ticketbooking.model;
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
  * The type User.
  */
-@Entity
-@Table(name = "users")
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Document("users")
 public class User {
 
     /**
      * The Id.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     /**
      * The Name.
      */
-    @Column(name = "name", nullable = false)
     private String name;
 
     /**
      * The Email.
      */
-    @Column(name = "email", nullable = false)
     private String email;
 
-    /**
-     * The list of user tickets.
-     */
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private final List<Ticket> tickets = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private UserAccount userAccount;
+    /**
+     * The amount of user money.
+     */
+    private BigDecimal money;
+
 
     /**
      * Instantiates a new User.
@@ -56,7 +47,7 @@ public class User {
      * @param name  the name
      * @param email the email
      */
-    public User(Long id, String name, String email) {
+    public User(String id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -78,7 +69,7 @@ public class User {
      *
      * @return the id
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -87,7 +78,7 @@ public class User {
      *
      * @param id the id
      */
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -127,28 +118,12 @@ public class User {
         this.email = email;
     }
 
-    /**
-     * Gets user tickets.
-     * @return tickets
-     */
-    public List<Ticket> getTickets() {
-        return tickets;
+    public BigDecimal getMoney() {
+        return money;
     }
 
-    /**
-     * Gets user account.
-     * @return userAccount
-     */
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    /**
-     * Sets user account.
-     * @param userAccount the user account
-     */
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
+    public void setMoney(BigDecimal money) {
+        this.money = money;
     }
 
     /**
